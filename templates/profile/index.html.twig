@@ -1,21 +1,66 @@
 {# templates/profile/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon profil{% endblock %}
+{% block title %}Profil{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .card-img-top {
+            height: 150px; /* Hauteur fixe pour les images */
+            object-fit: cover; /* Permet de couvrir la zone sans déformation */
+        }
+        .card {
+            min-height: 350px; /* Taille minimale de la carte */
+            max-width: 225px; /* Largeur maximale de la carte */
+        }
+        .profile-info {
+            margin-bottom: 40px;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<div class="d-flex justify-content-center align-items-center vh-100">
-    <div class="card" style="width: 25rem;">
-        <div class="card-body">
-            <h5 class="card-title">Profil utilisateur</h5>
+<div class="container">
+    <header class="mb-5">
+        <h1>Mon Profil</h1>
+        <p class="lead">Informations personnelles et historique d'achats</p>
+    </header>
 
-            <ul class="list-group">
-                <li class="list-group-item">Nom : {{ user.name }}</li>
-                <li class="list-group-item">Prénom : {{ user.surnameUsers }}</li>
-                <li class="list-group-item">Email : {{ user.emailUsers }}</li>
-                <li class="list-group-item">Téléphone : {{ user.phoneUsers }}</li>
-            </ul>
+    {# Section Informations personnelles de l'utilisateur #}
+    <section class="profile-info mb-5">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Informations personnelles</h4>
+                <ul class="list-unstyled">
+                    <li><strong>Nom :</strong> {{ app.user.name }}</li>
+                    <li><strong>Prénom :</strong> {{ app.user.surnameUsers }}</li>
+                    <li><strong>Email :</strong> {{ app.user.emailUsers }}</li>
+                    <li><strong>Points disponibles :</strong> {{ app.user.pointUsers }} UniTs</li>
+                </ul>
+            </div>
         </div>
-    </div>
+    </section>
+
+    {# Section Achats #}
+    <section class="shop-section mb-5">
+        <h2>Mes achats</h2>
+        <div class="row">
+            {% for buy in buys %}
+                {% set shop = buy.getIsShop %} {# Obtenir le produit associé à l'achat #}
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow-sm mx-auto">
+                        <img src="{{ asset('images/' ~ shop.getNameShop ~ '.png') }}" class="card-img-top" alt="{{ shop.getNameShop }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ shop.getNameShop }}</h5>
+                            <p class="card-text">{{ shop.getDescriptionShop }}</p>
+                            <span class="badge bg-success">{{ shop.getPriceShop }} UniTs</span>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p>Vous n'avez effectué aucun achat pour l'instant.</p>
+            {% endfor %}
+        </div>
+    </section>
 </div>
 {% endblock %}
