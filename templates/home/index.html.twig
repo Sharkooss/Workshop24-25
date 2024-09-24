@@ -1,0 +1,66 @@
+{# templates/home/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+<div class="container text-center">
+    <header class="mb-5">
+        <h1>Bienvenue sur la page d'accueil</h1>
+        <p class="lead">Gérez vos points et vos défis avec vos amis</p>
+    </header>
+
+    <section class="points-section mb-5">
+        <h2>Mes points</h2>
+        <div class="points-display">
+            <span class="display-4 points">800 Points</span>
+        </div>
+        <button class="btn btn-primary mt-3">Ajouter des amis</button>
+    </section>
+
+    <section class="challenge-section mb-5">
+        <h2>Défi entre amis</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <button class="btn btn-danger w-100 mb-2">Recherche amis</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-danger w-100 mb-2">Quel défi ?</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="shop-section mb-5">
+        <h2>Boutiques</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <img src="path-to-your-image/vending-machine.jpg" class="card-img-top" alt="Distributeurs">
+                    <div class="card-body">
+                        <h5 class="card-title">Distributeurs</h5>
+                        <p class="card-text">Achats boissons, sucreries et déjeuner.</p>
+                        <span class="badge bg-success">800 points</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <img src="path-to-your-image/parking.jpg" class="card-img-top" alt="Place de parking">
+                    <div class="card-body">
+                        <h5 class="card-title">Place de parking</h5>
+                        <p class="card-text">Place de parking au sein du campus.</p>
+                        <span class="badge bg-success">800 points</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <ul class="list-unstyled">
+            <li><a href="#">Mentions légales</a></li>
+            <li><a href="#">Politique de confidentialité</a></li>
+        </ul>
+    </footer>
+</div>
+{% endblock %}

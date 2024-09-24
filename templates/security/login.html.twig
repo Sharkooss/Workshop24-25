@@ -1,0 +1,35 @@
+{# templates/security/login.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card" style="width: 25rem;">
+        <div class="card-body">
+            <h5 class="card-title">Connexion</h5>
+
+            {# Affiche les erreurs si la connexion échoue #}
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                <div class="form-group mb-3">
+                    <label for="inputEmail">Email</label>
+                    <input type="text" name="email_users" id="inputEmail" class="form-control" value="{{ last_username }}" required autofocus>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="inputPassword">Mot de passe</label>
+                    <input type="password" name="password" id="inputPassword" class="form-control" required>
+                </div>
+
+                <button class="btn btn-primary w-100" type="submit">Se connecter</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

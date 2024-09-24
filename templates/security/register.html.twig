@@ -1,0 +1,51 @@
+{# templates/security/register.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card" style="width: 25rem;">
+        <div class="card-body">
+            <h5 class="card-title">Inscription</h5>
+
+            {# Affiche les erreurs globales du formulaire #}
+            {{ form_errors(registrationForm) }}
+
+            {{ form_start(registrationForm) }}
+                <div class="form-group mb-3">
+                    {{ form_label(registrationForm.name) }}
+                    {{ form_widget(registrationForm.name, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(registrationForm.name) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form_label(registrationForm.surname_users) }}
+                    {{ form_widget(registrationForm.surname_users, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(registrationForm.surname_users) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form_label(registrationForm.email_users) }}
+                    {{ form_widget(registrationForm.email_users, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(registrationForm.email_users) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form_label(registrationForm.plainPassword.first) }}
+                    {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form_label(registrationForm.plainPassword.second) }}
+                    {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(registrationForm.plainPassword.second) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form_label(registrationForm.phone_users) }}
+                    {{ form_widget(registrationForm.phone_users, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(registrationForm.phone_users) }}
+                </div>
+                <button class="btn btn-primary w-100" type="submit">S'inscrire</button>
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

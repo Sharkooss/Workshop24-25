@@ -1,0 +1,21 @@
+{# templates/profile/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card" style="width: 25rem;">
+        <div class="card-body">
+            <h5 class="card-title">Profil utilisateur</h5>
+
+            <ul class="list-group">
+                <li class="list-group-item">Nom : {{ user.name }}</li>
+                <li class="list-group-item">Prénom : {{ user.surnameUsers }}</li>
+                <li class="list-group-item">Email : {{ user.emailUsers }}</li>
+                <li class="list-group-item">Téléphone : {{ user.phoneUsers }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

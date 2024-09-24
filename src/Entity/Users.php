@@ -7,10 +7,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
-class Users
+class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    // Ajoute cette validation pour plainPassword (non stockée dans la base de données)
+    private ?string $plainPassword = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $password = null; // Propriété pour stocker le mot de passe haché
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -59,6 +69,8 @@ class Users
         $this->events = new ArrayCollection();
         $this->participates = new ArrayCollection();
         $this->challengeds = new ArrayCollection();
+
+        $this->role_users = 'ROLE_USER'; 
     }
 
     public function getId(): ?int
@@ -298,5 +310,55 @@ class Users
         }
 
         return $this;
+    }
+
+     /**
+     * @Assert\NotBlank(message="Le mot de passe ne doit pas être vide.")
+     * @Assert\Length(min=6, minMessage="Le mot de passe doit comporter au moins {{ limit }} caractères.")
+     */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        $this->plainPassword = null; // Efface le mot de passe en clair après l'authentification
+    }
+
+    // Méthodes requises par UserInterface
+    public function getRoles(): array
+    {
+        return ['ROLE_USER']; // Par défaut, chaque utilisateur a le rôle "ROLE_USER"
+    }
+
+    public function getSalt(): ?string
+    {
+        // Si tu utilises bcrypt, tu n'as pas besoin de salt, il est intégré dans l'algorithme
+        return null;
+    }
+    // Méthodes requises par UserInterface
+    public function getUserIdentifier(): string
+    {
+        return $this->email_users; // Ou le champ que tu utilises comme identifiant
     }
 }
