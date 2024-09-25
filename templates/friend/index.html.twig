@@ -79,7 +79,10 @@
         {% for challenge in challengesReceived %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 Défi reçu de {{ challenge.challenger.getName() }} : {{ challenge.amount }} UniTs
-                <a href="{{ path('app_challenge_accept', { id: challenge.id }) }}" class="btn btn-success">Accepter</a>
+                <div>
+                    <a href="{{ path('app_challenge_accept', { id: challenge.id }) }}" class="btn btn-success">Accepter</a>
+                    <a href="{{ path('app_challenge_refuse', { id: challenge.id }) }}" class="btn btn-danger">Refuser</a>
+                </div>
             </li>
         {% else %}
             <p>Vous n'avez reçu aucun défi.</p>

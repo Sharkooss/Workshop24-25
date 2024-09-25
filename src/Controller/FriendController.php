@@ -235,4 +235,22 @@ class FriendController extends AbstractController
         ]);
     }
 
+    #[Route('/challenge/refuse/{id}', name: 'app_challenge_refuse')]
+    public function refuseChallenge(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $challenged = $entityManager->getRepository(Challenged::class)->find($id);
+        $user = $this->getUser();
+
+        if ($challenged->getOpponent() !== $user) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas refuser ce défi.');
+        }
+
+        // Supprimer le défi ou le marquer comme refusé
+        $entityManager->remove($challenged);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Vous avez refusé le défi.');
+
+        return $this->redirectToRoute('app_friends'); // Rediriger vers la page des défis ou amis
+    }
 }

@@ -14,4 +14,9 @@ class LegalController extends AbstractController
     {
         return $this->render('legal/terms.html.twig');
     }
+    #[Route('/politic', name: 'app_politic')]
+    public function politic(): Response
+    {
+        return $this->render('legal/politic.html.twig');
+    }
 }
