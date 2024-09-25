@@ -3,49 +3,109 @@
 
 {% block title %}Inscription{% endblock %}
 
+{% block stylesheets %}
+    <style>
+        .register-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap:50px;
+        }
+
+        .card {
+            width: 25rem;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 10px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+        }
+
+        .alert-danger {
+            font-size: 1rem;
+            color: #fff;
+            background-color: #dc3545;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            width: 200px;
+            margin-bottom: 30px;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-<div class="d-flex justify-content-center align-items-center vh-100">
-    <div class="card" style="width: 25rem;">
-        <div class="card-body">
-            <h5 class="card-title">Inscription</h5>
+<div class="register-container">
+    <div class="logo-container">
+        <img src="{{ asset('images/Logos.png') }}" alt="Logo UniToken">
+    </div>
 
-            {# Affiche les erreurs globales du formulaire #}
-            {{ form_errors(registrationForm) }}
+    <div class="card">
+        <h5 class="card-title">Inscription</h5>
 
-            {{ form_start(registrationForm) }}
-                <div class="form-group mb-3">
-                    {{ form_label(registrationForm.name) }}
-                    {{ form_widget(registrationForm.name, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(registrationForm.name) }}
-                </div>
-                <div class="form-group mb-3">
-                    {{ form_label(registrationForm.surname_users) }}
-                    {{ form_widget(registrationForm.surname_users, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(registrationForm.surname_users) }}
-                </div>
-                <div class="form-group mb-3">
-                    {{ form_label(registrationForm.email_users) }}
-                    {{ form_widget(registrationForm.email_users, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(registrationForm.email_users) }}
-                </div>
-                <div class="form-group mb-3">
-                    {{ form_label(registrationForm.plainPassword.first) }}
-                    {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(registrationForm.plainPassword.first) }}
-                </div>
-                <div class="form-group mb-3">
-                    {{ form_label(registrationForm.plainPassword.second) }}
-                    {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(registrationForm.plainPassword.second) }}
-                </div>
-                <div class="form-group mb-3">
-                    {{ form_label(registrationForm.phone_users) }}
-                    {{ form_widget(registrationForm.phone_users, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(registrationForm.phone_users) }}
-                </div>
-                <button class="btn btn-primary w-100" type="submit">S'inscrire</button>
-            {{ form_end(registrationForm) }}
-        </div>
+        {% if form_errors(registrationForm) %}
+            <div class="alert alert-danger">
+                {{ form_errors(registrationForm) }}
+            </div>
+        {% endif %}
+
+        {{ form_start(registrationForm) }}
+            <div class="form-group mb-3">
+                {{ form_label(registrationForm.name) }}
+                {{ form_widget(registrationForm.name, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.name) }}
+            </div>
+            <div class="form-group mb-3">
+                {{ form_label(registrationForm.surname_users) }}
+                {{ form_widget(registrationForm.surname_users, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.surname_users) }}
+            </div>
+            <div class="form-group mb-3">
+                {{ form_label(registrationForm.email_users) }}
+                {{ form_widget(registrationForm.email_users, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.email_users) }}
+            </div>
+            <div class="form-group mb-3">
+                {{ form_label(registrationForm.plainPassword.first) }}
+                {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.plainPassword.first) }}
+            </div>
+            <div class="form-group mb-3">
+                {{ form_label(registrationForm.plainPassword.second) }}
+                {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.plainPassword.second) }}
+            </div>
+            <div class="form-group mb-3">
+                {{ form_label(registrationForm.phone_users) }}
+                {{ form_widget(registrationForm.phone_users, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.phone_users) }}
+            </div>
+        {{ form_end(registrationForm) }}
     </div>
 </div>
 {% endblock %}

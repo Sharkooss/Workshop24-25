@@ -47,6 +47,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email_users = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $discord = null;
+
     #[ORM\OneToMany(targetEntity: Friend::class, mappedBy: 'id_users')]
     private Collection $friends;
 
@@ -360,5 +363,17 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email_users; // Ou le champ que tu utilises comme identifiant
+    }
+
+    public function getDiscord(): ?string
+    {
+        return $this->discord;
+    }
+
+    public function setDiscord(?string $discord): static
+    {
+        $this->discord = $discord;
+
+        return $this;
     }
 }

@@ -1,13 +1,139 @@
-{# templates/chat/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Chat Global{% endblock %}
 
+{% block stylesheets %}
+    <style>
+        /* Conteneur général */
+        .container {
+            max-width: 900px;
+            margin-top: 30px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Titre du chat */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Boîte de chat */
+        #chat-box {
+            height: 400px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Messages */
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-info {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .message-bubble {
+            max-width: 65%;
+            padding: 12px 18px;
+            border-radius: 15px;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        /* Messages des autres utilisateurs */
+        .message-left .message-bubble {
+            background-color: #eaeaea;
+            border-radius: 15px 15px 15px 0;
+            align-self: flex-start;
+        }
+
+        /* Mes messages */
+        .message-right .message-bubble {
+            background-color: #007bff;
+            color: white;
+            border-radius: 15px 15px 0 15px;
+            align-self: flex-end;
+        }
+
+        .message-right {
+            align-items: flex-end;
+        }
+
+        .message-left {
+            align-items: flex-start;
+        }
+
+        /* Formulaire d'envoi de message */
+        form#chat-form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #chat-message {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        #chat-message:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Animation pour les bulles de message */
+        {# .message-bubble {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        } #}
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <div class="container">
-    <h1 class="text-center">Chat Global</h1>
+    <h1>Chat Global</h1>
 
-    <div id="chat-box" style="height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background-color: #f7f7f7;">
+    <div id="chat-box">
         {% for message in messages %}
             <div class="message {% if message.sender == app.user %}message-right{% else %}message-left{% endif %}">
                 <div class="message-info">
@@ -23,76 +149,11 @@
 
     <div class="mt-3">
         <form id="chat-form">
-            <div class="form-group">
-                <input type="text" id="chat-message" class="form-control" placeholder="Tapez votre message...">
-            </div>
-            <button type="submit" class="btn btn-primary mt-2">Envoyer</button>
+            <input type="text" id="chat-message" class="form-control" placeholder="Tapez votre message...">
+            <button type="submit" class="btn btn-primary">Envoyer</button>
         </form>
     </div>
 </div>
-
-<style>
-    .container{
-        max-width: 800px;
-    }
-
-
-    #chat-box {
-        padding: 15px;
-        background-color: #f1f1f1;
-        border-radius: 10px;
-    }
-
-    .message {
-        margin-bottom: 15px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .message-info {
-        font-size: 0.9rem;
-        color: #555;
-    }
-
-    .message-bubble {
-        max-width: 60%;
-        padding: 10px 15px;
-        border-radius: 15px;
-        font-size: 1rem;
-        line-height: 1.5;
-    }
-
-    .message-left .message-bubble {
-        background-color: #e0e0e0;
-        border-radius: 15px 15px 15px 0;
-        align-self: flex-start;
-    }
-
-    .message-right .message-bubble {
-        background-color: #007bff;
-        color: white;
-        border-radius: 15px 15px 0 15px;
-        align-self: flex-end;
-    }
-
-    .message-right {
-        align-items: flex-end;
-    }
-
-    .message-left {
-        align-items: flex-start;
-    }
-
-    form#chat-form {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    #chat-message {
-        flex: 1;
-    }
-</style>
 
 <script>
     function fetchMessages() {

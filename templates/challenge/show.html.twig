@@ -2,12 +2,131 @@
 
 {% block title %}Défi{% endblock %}
 
+{% block stylesheets %}
+    <style>
+        /* Conteneur principal */
+        .container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+            max-width: 800px;
+        }
+
+        /* Titre principal */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            color: #007bff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        /* Description du défi */
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Liste des participants */
+        #participants-list {
+            margin-bottom: 30px;
+        }
+
+        .list-group-item {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Badge de statut */
+        .status-badge {
+            font-size: 1rem;
+            padding: 10px 15px;
+            border-radius: 30px;
+        }
+
+        /* Boutons */
+        .btn-primary, .btn-success, .btn-secondary {
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 30px;
+        }
+
+        /* Modale - Sélection du vainqueur */
+        .modal-header {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+        }
+
+        /* Formulaire Switch */
+        .form-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 15px 0;
+        }
+
+        .form-switch label {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        /* Custom Switch Styling */
+        .custom-switch {
+            width: 40px;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .custom-switch::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background-color: white;
+            border-radius: 50%;
+            top: 1px;
+            left: 1px;
+            transition: transform 0.3s;
+        }
+
+        input[type="radio"]:checked + .custom-switch::before {
+            transform: translateX(20px);
+        }
+
+        input[type="radio"]:checked + .custom-switch {
+            background-color: #007bff;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <div class="container">
     <h1>{{ challenge.nameChallenge }}</h1>
     <p>{{ challenge.descritpionChallenge }}</p>
 
-    <h3>Participants</h3>
+    <h3 class="mb-4">Participants</h3>
     <ul class="list-group" id="participants-list">
         <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ challenge.challengeds[0].challenger.getName() }} vs {{ challenge.challengeds[0].opponent.getName() }}
@@ -30,7 +149,6 @@
     {% endif %}
 </div>
 
-<!-- Modal for selecting winner -->
 <!-- Modale pour choisir le vainqueur -->
 <div class="modal fade" id="selectWinnerModal" tabindex="-1" aria-labelledby="selectWinnerModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -94,44 +212,4 @@ document.getElementById('validateWinnerBtn').addEventListener('click', function(
     }
 });
 </script>
-
-<style>
-    .form-switch {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        padding: 5px;
-    }
-
-    .custom-switch {
-        width: 40px;
-        height: 20px;
-        background-color: #ddd;
-        border-radius: 20px;
-        position: relative;
-        margin-right: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .custom-switch::before {
-        content: '';
-        position: absolute;
-        width: 18px;
-        height: 18px;
-        background-color: white;
-        border-radius: 50%;
-        top: 1px;
-        left: 1px;
-        transition: transform 0.3s;
-    }
-
-    input[type="radio"]:checked + .custom-switch::before {
-        transform: translateX(20px);
-    }
-
-    input[type="radio"]:checked + .custom-switch {
-        background-color: #007bff;
-    }
-</style>
 {% endblock %}

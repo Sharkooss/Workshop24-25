@@ -5,48 +5,182 @@
 
 {% block stylesheets %}
     <style>
-        .card-img-top {
-            height: 200px; /* Fixe une hauteur pour les images */
-            object-fit: cover; /* Permet de couvrir la zone sans déformation */
+        /* Styles généraux */
+        body {
+            background-color: #fff; /* Fond blanc absolu */
+            font-family: 'Roboto', sans-serif;
+            color: #333;
         }
+
+        /* Section de l'en-tête */
+        .header-section {
+            text-align: center;
+            padding: 50px 0;
+            position: relative;
+        }
+
+        .header-section img {
+            width: 150px;
+        }
+
+        .header-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Ombre au texte */
+            transition: text-shadow 0.3s ease-in-out;
+        }
+
+        /* Hover pour le titre */
+        .header-section h1:hover {
+            text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-section p {
+            font-size: 1.5rem;
+            color: #666;
+        }
+
+        /* Section des points UniTs */
+        .points-section {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .points-display {
+            display: inline-block;
+            padding: 20px 40px;
+            background-color: #007bff;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Animation pour le solde */
+        .points-display:hover {
+            transform: scale(1.1);
+        }
+
+        /* Section des produits en boutique */
+        .shop-section {
+            padding: 40px 0;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
         .card {
-            min-height: 350px; /* Fixe une taille minimale pour la carte */
-            max-width: 225px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+            max-width: 200px; /* Limite la largeur de la carte */
         }
-        .container.text-center{
-            max-width:500px
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card-img-top {
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .badge {
+            font-size: 1rem;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        footer ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        footer a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
         }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="container text-center">
-    <header class="mb-5">
-        <h1>UniToken</h1>
-        <p class="lead">Ensemble, faisons vivre notre campus</p>
-    </header>
+<div class="container">
+    {# Header Section with Logo #}
+    <div class="header-section">
+        <img src="{{ asset('images/Logos.png') }}" alt="Unit Logo">
+        <h1>Bienvenue sur UniToken</h1>
+        <p>Faisons vivre notre campus avec UniToken, votre monnaie virtuelle !</p>
+    </div>
 
-    <section class="points-section mb-5">
-        <h2>Mes points</h2>
+    {# Section Points UniTs #}
+    <section class="points-section">
+        <h2>Mon Porte-monnaie</h2>
         <div class="points-display">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                <span class="points" style="font-size: 40px; color:blue">{{ points }} UniTs</span>
+                {{ points }} UniTs
             {% else %}
-                <span class="points" style="font-size: 40px;">0 UniT</span>
-                <p class="text-muted" style="font-size: 20px;">Veuillez vous connecter pour voir vos points.</p>
+                0 UniT
+                <p class="text-muted">Connectez-vous pour voir votre solde.</p>
             {% endif %}
         </div>
     </section>
 
-    <section class="shop-section mb-5">
+    {# Section Produits en Boutique #}
+    <section class="shop-section">
         <h2>Boutiques</h2>
-        <div class="row">
+        <div class="row justify-content-center">
             {% for product in products %}
-                <div class="col-md-6">
-                    <div class="card shadow-sm">
+                <div class="col-md-4 col-sm-6">
+                    <div class="card">
                         <img src="{{ asset('images/' ~ product.getNameShop ~ '.png') }}" class="card-img-top" alt="{{ product.getNameShop }}">
                         <div class="card-body">
-                            <p class="card-text" style="color:#3E3F3F;"><b>{{ product.getDescriptionShop }}</b></p>
+                            <p class="card-text"><strong>{{ product.getDescriptionShop }}</strong></p>
                             <span class="badge bg-success">{{ product.getPriceShop }} UniTs</span>
                             <span class="badge bg-info">Stock: {{ product.getStockShop }}</span>
                             {% if points >= product.getPriceShop %}
@@ -65,10 +199,11 @@
         </div>
     </section>
 
+    {# Footer #}
     <footer>
         <ul class="list-unstyled">
-            <li><a href="{{ path('app_terms') }}">Mentions légales</a></li>
-            <li><a href="{{ path('app_politic') }}">Politique de confidentialité </a></li>
+            <li><a href="{{ path('app_terms') }}">Conditions Générales de Vente</a></li>
+            <li><a href="{{ path('app_politic') }}">Politique de Confidentialité</a></li>
         </ul>
     </footer>
 </div>

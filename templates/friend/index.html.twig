@@ -2,16 +2,131 @@
 
 {% block title %}Mes amis{% endblock %}
 
+{% block stylesheets %}
+    <style>
+        /* Container principal */
+        .container {
+            max-width: 1200px;
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+        }
+
+        /* Titre principal */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #007bff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Sous-titres */
+        h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* Listes */
+        .list-group-item {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Boutons */
+        .btn {
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        /* Badges */
+        .badge {
+            font-size: 1rem;
+            padding: 8px 15px;
+            border-radius: 15px;
+        }
+
+        .badge-info {
+            background-color: #17a2b8;
+        }
+
+        .badge-secondary {
+            background-color: #6c757d;
+        }
+
+        /* Alignement des boutons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .list-group-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .action-buttons {
+                margin-top: 10px;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <div class="container">
     <h1>Mes amis</h1>
 
     <h3>Demandes reçues</h3>
-    <ul class="list-group mb-3">
+    <ul class="list-group mb-5">
         {% for friendRequest in receivedRequests %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                Demande d'ami de {{ friendRequest.sender.getName() }} {{ friendRequest.sender.getSurnameUsers() }}
-                <div>
+                <span>Demande d'ami de <strong>{{ friendRequest.sender.getName() }} {{ friendRequest.sender.getSurnameUsers() }}</strong></span>
+                <div class="action-buttons">
                     <form method="POST" action="{{ path('app_friend_respond', { id: friendRequest.id }) }}">
                         <input type="hidden" name="response" value="accept">
                         <button class="btn btn-success">Accepter</button>
@@ -28,10 +143,10 @@
     </ul>
 
     <h3>Liste de mes amis</h3>
-    <ul class="list-group">
+    <ul class="list-group mb-5">
         {% for friend in friends %}
             {% set canChallenge = true %}
-            {# Vérifier si un défi est déjà en attente (status 'pending') avec cet ami #}
+            {# Vérification si un défi est déjà en attente #}
             {% for challenge in challengesSent %}
                 {% if challenge.opponent.id == friend.id and challenge.status == 'pending' %}
                     {% set canChallenge = false %}
@@ -43,8 +158,8 @@
                 {% endif %}
             {% endfor %}
 
-            <li class="list-group-item">
-                {{ friend.getName() }} {{ friend.getSurnameUsers() }}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ friend.getName() }} {{ friend.getSurnameUsers() }}</span>
                 {% if canChallenge %}
                     <a href="{{ path('app_challenge_initiate', { id: friend.id }) }}" class="btn btn-warning">Défier</a>
                 {% else %}
@@ -56,16 +171,15 @@
         {% endfor %}
     </ul>
 
-
     <h3>Défis envoyés</h3>
-    <ul class="list-group mb-5" id="challenges-sent">
+    <ul class="list-group mb-5">
         {% for challenge in challengesSent %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                Défi envoyé à {{ challenge.opponent.getName() }} : {{ challenge.amount }} UniTs
+                <span>Défi envoyé à {{ challenge.opponent.getName() }} : {{ challenge.amount }} UniTs</span>
                 {% if challenge.status == 'accepted' %}
                     <a href="{{ path('app_challenge_show', { id: challenge.id }) }}" class="btn btn-success">Rejoindre le défi</a>
                 {% else %}
-                    <span class="badge bg-info">En attente</span>
+                    <span class="badge badge-info">En attente</span>
                 {% endif %}
             </li>
         {% else %}
@@ -73,13 +187,12 @@
         {% endfor %}
     </ul>
 
-
     <h3>Défis reçus</h3>
-    <ul class="list-group" id="challenges-received">
+    <ul class="list-group">
         {% for challenge in challengesReceived %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                Défi reçu de {{ challenge.challenger.getName() }} : {{ challenge.amount }} UniTs
-                <div>
+                <span>Défi reçu de {{ challenge.challenger.getName() }} : {{ challenge.amount }} UniTs</span>
+                <div class="action-buttons">
                     <a href="{{ path('app_challenge_accept', { id: challenge.id }) }}" class="btn btn-success">Accepter</a>
                     <a href="{{ path('app_challenge_refuse', { id: challenge.id }) }}" class="btn btn-danger">Refuser</a>
                 </div>
@@ -96,5 +209,4 @@
     }
     const pageRefreshInterval = setInterval(refreshPage, 5000);
 </script>
-
 {% endblock %}

@@ -1,24 +1,83 @@
-{# templates/event/new.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Créer un événement{% endblock %}
 
+{% block stylesheets %}
+    <style>
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #007bff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-control {
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            background-color: #007bff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .mb-3 {
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-<div class="container mt-5">
-    <h1 class="text-center mb-5">Créer un événement</h1>
+<div class="container">
+    <h1>Créer un événement</h1>
 
     {{ form_start(form) }}
         <div class="mb-3">
-            {{ form_label(form.name_event) }}
-            {{ form_widget(form.name_event, {'attr': {'class': 'form-control'}}) }}
+            {{ form_label(form.name_event, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.name_event, {'attr': {'class': 'form-control', 'placeholder': 'Nom de l\'événement'}}) }}
         </div>
         <div class="mb-3">
-            {{ form_label(form.description_event) }}
-            {{ form_widget(form.description_event, {'attr': {'class': 'form-control'}}) }}
+            {{ form_label(form.description_event, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description_event, {'attr': {'class': 'form-control', 'placeholder': 'Description de l\'événement'}}) }}
         </div>
         <div class="mb-3">
-            {{ form_label(form.cash_prise) }}
-            {{ form_widget(form.cash_prise, {'attr': {'class': 'form-control'}}) }}
+            {{ form_label(form.cash_prise, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.cash_prise, {'attr': {'class': 'form-control', 'placeholder': 'Montant du cash prize'}}) }}
         </div>
         <button type="submit" class="btn btn-primary">Créer l'événement</button>
     {{ form_end(form) }}

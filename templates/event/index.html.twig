@@ -1,47 +1,182 @@
-{# templates/event/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Liste des événements{% endblock %}
 
+{% block stylesheets %}
+    <style>
+        /* Style général */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        /* Section principale */
+        .container {
+            max-width: 1200px;
+        }
+
+        /* Titre principal */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Liste des événements */
+        .list-group-item {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .list-group-item:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Titre de l'événement */
+        .event-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        /* Description de l'événement */
+        .event-description {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* Bouton d'action */
+        .btn-primary, .btn-warning, .btn-info {
+            border-radius: 30px;
+            padding: 5px 10px;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-warning:hover {
+            background-color: #ffb606;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+
+        .btn-info:hover {
+            background-color: #117a8b;
+        }
+
+        /* Cash Prize et Statut */
+        .cash-prize, .event-status {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* Statut badge */
+        .badge {
+            padding: 10px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+        }
+
+        /* Inscrit Badge */
+        .badge-inscrit {
+            background-color: #28a745;
+            color: white;
+        }
+
+        /* Inscriptions fermées ou événement terminé badge */
+        .badge-closed, .badge-terminated {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        /* Bouton créer un événement */
+        .create-event-btn {
+            background-color: #007bff;
+            color: white;
+            font-size: 1rem;
+            border-radius: 30px;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .create-event-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive pour mobile */
+        @media (max-width: 768px) {
+            .list-group-item {
+                padding: 15px;
+            }
+
+            .event-title {
+                font-size: 1.3rem;
+            }
+
+            .cash-prize, .event-status {
+                font-size: 1rem;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-<div class="container mt-5">
-    <h1 class="text-center mb-5">Liste des événements</h1>
+<div class="container text-center mt-5">
+    <h1 class="text-center">Liste des événements</h1>
 
     {# Bouton pour créer un événement uniquement visible pour les ADMIN #}
     {% if isAdmin %}
-        <div class="mb-4 text-end">
-            <a href="{{ path('app_event_new') }}" class="btn btn-success">Créer un événement</a>
+        <div class="text-end mb-4">
+            <a href="{{ path('app_event_new') }}" class="create-event-btn">Créer un événement</a>
         </div>
     {% endif %}
 
     <ul class="list-group">
         {% for event in events %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <h5>{{ event.nameEvent }}</h5>
-                    <p>{{ event.descriptionEvent }}</p>
-                    <p><strong>Cash Prize:</strong> {{ event.cashPrise }} UniTs</p>
-                    <p><strong>Statut :</strong> {{ event.status|capitalize }}</p>
+                <div class="text-start">
+                    <h5 class="event-title">{{ event.nameEvent }}</h5>
+                    <p class="event-description">{{ event.descriptionEvent }}</p>
+                    <p class="cash-prize"><strong>Cash Prize:</strong> {{ event.cashPrise }} UniTs</p>
+                    <p class="event-status"><strong>Statut :</strong> 
+                        <span class="badge {% if event.status == 'open' %}bg-primary{% elseif event.status == 'close' %}badge-closed{% else %}badge-terminated{% endif %}">
+                            {{ event.status|capitalize }}
+                        </span>
+                    </p>
                 </div>
-                <div>
+
+                <div class="text-end">
+                
+                    {# Ajouter le bouton "Voir" avec le même style #}
+                    <a href="{{ path('app_event_participants', { id: event.id }) }}" class="btn btn-info ">Voir</a>
+
                     {% if event.id in participatedEvents %}
-                        <span class="badge bg-primary">Inscrit</span>
+                        <span class="badge badge-inscrit">Inscrit</span>
                     {% else %}
                         {% if event.status == 'open' %}
                             <a href="{{ path('app_event_join', { id: event.id }) }}" class="btn btn-primary">S'inscrire</a>
                         {% elseif event.status == 'close' %}
-                            <span class="badge bg-secondary">Inscriptions fermées</span>
+                            <span class="badge badge-closed">Inscriptions fermées</span>
                         {% else %}
-                            <span class="badge bg-secondary">Événement terminé</span>
+                            <span class="badge badge-terminated">Événement terminé</span>
                         {% endif %}
                     {% endif %}
 
-                    {# Bouton pour afficher les participants #}
-                    <a href="{{ path('app_event_participants', { id: event.id }) }}" class="btn btn-sm btn-info">Voir</a>
-
-                    {# Ajouter le bouton "Gérer" pour les administrateurs #}
-                    {% if isAdmin %}
-                        <a href="{{ path('app_event_manage', { id: event.id }) }}" class="btn btn-warning">Gérer</a>
+                    {# Ajouter le bouton "Gérer" uniquement pour les administrateurs et si l'événement n'est pas "done" #}
+                    {% if isAdmin and event.status != 'done' %}
+                        <a href="{{ path('app_event_manage', { id: event.id }) }}" class="btn btn-warning ">Gérer</a>
                     {% endif %}
                 </div>
             </li>

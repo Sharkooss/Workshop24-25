@@ -1,42 +1,147 @@
-{# templates/profile/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Profil{% endblock %}
 
 {% block stylesheets %}
     <style>
-        .card-img-top {
-            height: 150px; /* Hauteur fixe pour les images */
-            object-fit: cover; /* Permet de couvrir la zone sans déformation */
+        /* Conteneur général */
+        .container {
+            max-width: 900px;
+            margin-top: 30px;
         }
-        .card {
-            min-height: 350px; /* Taille minimale de la carte */
-            max-width: 225px; /* Largeur maximale de la carte */
-        }
-        .profile-info {
+
+        /* En-tête du profil */
+        .profile-header {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
             margin-bottom: 40px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .profile-header h1 {
+            font-size: 2.5rem;
+            color: #007bff;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .profile-header p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* Informations personnelles */
+        .profile-info h4 {
+            font-size: 1.6rem;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .profile-info ul {
+            font-size: 1.2rem;
+            list-style-type: none;
+            padding-left: 0;
+            line-height: 2;
+        }
+        .profile-edit-btn {
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 30px;
+        }
+
+        /* Achats */
+        .shop-section h2 {
+            font-size: 2rem;
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            height: 280px;
+            max-width: 180px;
+            margin: 0 auto;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img-top {
+            height: 120px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .no-purchases {
+            font-size: 1.4rem;
+            text-align: center;
+            color: #999;
+            padding-top: 50px;
+        }
+
+        /* Badges */
+        .badge {
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .card {
+                height: auto;
+            }
+            .profile-info h4 {
+                font-size: 1.4rem;
+            }
         }
     </style>
 {% endblock %}
 
 {% block body %}
 <div class="container">
-    <header class="mb-5">
+    <div class="profile-header">
         <h1>Mon Profil</h1>
-        <p class="lead">Informations personnelles et historique d'achats</p>
-    </header>
+        <p>Vos informations personnelles et historique d'achats</p>
+    </div>
 
     {# Section Informations personnelles de l'utilisateur #}
     <section class="profile-info mb-5">
-        <div class="row">
-            <div class="col-md-6">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
                 <h4>Informations personnelles</h4>
-                <ul class="list-unstyled">
+                <ul>
                     <li><strong>Nom :</strong> {{ app.user.name }}</li>
                     <li><strong>Prénom :</strong> {{ app.user.surnameUsers }}</li>
                     <li><strong>Email :</strong> {{ app.user.emailUsers }}</li>
                     <li><strong>Points disponibles :</strong> {{ app.user.pointUsers }} UniTs</li>
+                    {% if app.user.discord %}
+                        <li><strong>Discord :</strong> {{ app.user.discord }}</li>
+                    {% else %}
+                        <li><strong>Discord :</strong> Non renseigné</li>
+                    {% endif %}
                 </ul>
+                <a href="{{ path('app_profile_edit') }}" class="btn btn-outline-primary profile-edit-btn">Modifier mes informations</a>
             </div>
         </div>
     </section>
@@ -44,13 +149,13 @@
     {# Section Achats #}
     <section class="shop-section mb-5">
         <h2>Mes achats</h2>
-        <div class="row">
+        <div class="row justify-content-center">
             {% for buy in buys %}
-                {% set shop = buy.getIsShop %} {# Obtenir le produit associé à l'achat #}
-                <div class="col-md-3 mb-4">
-                    <div class="card shadow-sm mx-auto">
+                {% set shop = buy.getIsShop %}
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card">
                         <img src="{{ asset('images/' ~ shop.getNameShop ~ '.png') }}" class="card-img-top" alt="{{ shop.getNameShop }}">
-                        <div class="card-body">
+                        <div class="card-body text-center">
                             <h5 class="card-title">{{ shop.getNameShop }}</h5>
                             <p class="card-text">{{ shop.getDescriptionShop }}</p>
                             <span class="badge bg-success">{{ shop.getPriceShop }} UniTs</span>
@@ -58,7 +163,9 @@
                     </div>
                 </div>
             {% else %}
-                <p>Vous n'avez effectué aucun achat pour l'instant.</p>
+                <div class="col-12 no-purchases">
+                    <p>Vous n'avez effectué aucun achat pour l'instant.</p>
+                </div>
             {% endfor %}
         </div>
     </section>
