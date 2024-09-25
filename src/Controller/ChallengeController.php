@@ -59,16 +59,19 @@ class ChallengeController extends AbstractController
     {
         $challenged = $entityManager->getRepository(Challenged::class)->find($id);
         $user = $this->getUser();
-
-        if ($challenged->getOpponent() !== $user) {
+    
+        // Vérifier que l'utilisateur est bien l'adversaire
+        if ($challenged->getOpponent() !== $user && $challenged->getChallenger() !== $user) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas accepter ce défi.');
         }
-
+    
+        // Mettre à jour le statut pour les deux participants
         $challenged->setStatus('accepted');
+    
         $entityManager->flush();
-
+    
         $this->addFlash('success', 'Vous avez accepté le défi.');
-
+    
         return $this->redirectToRoute('app_challenge_show', ['id' => $challenged->getIdChallenge()->getId()]);
     }
 
@@ -93,54 +96,49 @@ class ChallengeController extends AbstractController
             'selectionComplete' => $selectionComplete,
         ]);
     }
-    
 
     #[Route('/challenge/select_winner/{id}', name: 'app_challenge_select_winner', methods: ['POST'])]
-    public function selectWinner(int $id, EntityManagerInterface $entityManager): Response
+    public function selectWinner(int $id, Request $request, EntityManagerInterface $entityManager): Response
     {
         $challenged = $entityManager->getRepository(Challenged::class)->find($id);
         $user = $this->getUser();
         $challenge = $challenged->getIdChallenge();
-
-        if ($challenged->getChallenger() !== $user && $challenged->getOpponent() !== $user) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas sélectionner un gagnant pour ce défi.');
+    
+        // Récupérer les données du gagnant
+        $data = json_decode($request->getContent(), true);
+        $selectedWinnerId = $data['winner'];
+    
+        // Vérifier si l'utilisateur fait partie du défi
+        if ($challenged->getChallenger()->getId() !== $user->getId() && $challenged->getOpponent()->getId() !== $user->getId()) {
+            return $this->json(['error' => 'Vous ne pouvez pas sélectionner un gagnant pour ce défi.'], 403);
         }
-
-        $selectedWinnerId = $user->getId();
-
-        if ($challenged->getChallenger() === $user) {
+    
+        // Enregistrer la sélection du gagnant
+        if ($challenged->getChallenger()->getId() === $user->getId()) {
             $challenged->setSelectedWinnerChallenger($selectedWinnerId);
         } else {
             $challenged->setSelectedWinnerOpponent($selectedWinnerId);
         }
-
-        $participants = $challenge->getChallengeds();
-        $winner = null;
-        $selectionComplete = true;
-
-        foreach ($participants as $participant) {
-            if ($participant->getSelectedWinnerChallenger() === null || $participant->getSelectedWinnerOpponent() === null) {
-                $selectionComplete = false;
-                break;
-            }
-            if ($winner === null) {
-                $winner = $participant->getSelectedWinnerChallenger();
-            } elseif ($winner !== $participant->getSelectedWinnerOpponent()) {
-                $selectionComplete = false;
-                break;
+    
+        $entityManager->flush(); // Enregistrer la sélection
+    
+        // Vérifier si les deux participants ont sélectionné le même gagnant
+        if ($challenged->getSelectedWinnerChallenger() !== null && $challenged->getSelectedWinnerOpponent() !== null) {
+            if ($challenged->getSelectedWinnerChallenger() === $challenged->getSelectedWinnerOpponent()) {
+                $this->handleUnitTransfer($challenged->getSelectedWinnerChallenger(), $challenge, $entityManager);
+                $challenged->setStatus('done'); // Met à jour le statut du challenge à "done"
+                $entityManager->flush(); // Sauvegarder l'état final
+                return $this->json(['success' => true]);
+            } else {
+                // Réinitialiser les votes si les gagnants ne correspondent pas
+                $challenged->setSelectedWinnerChallenger(null);
+                $challenged->setSelectedWinnerOpponent(null);
+                $entityManager->flush();
+                return $this->json(['reset' => true]);
             }
         }
-
-        if ($selectionComplete && $winner !== null) {
-            $this->handleUnitTransfer($winner, $challenge, $entityManager);
-            $this->addFlash('success', 'Le défi est terminé et le gagnant a été désigné.');
-        } else {
-            $this->addFlash('info', 'Votre sélection a été enregistrée. En attente de l\'autre joueur.');
-        }
-
-        $entityManager->flush();
-
-        return $this->redirectToRoute('app_challenge_show', ['id' => $challenge->getId()]);
+    
+        return $this->json(['success' => false]);
     }
 
     private function handleUnitTransfer(int $winnerId, Challenge $challenge, EntityManagerInterface $entityManager): void
@@ -148,16 +146,50 @@ class ChallengeController extends AbstractController
         $winner = $entityManager->getRepository(Users::class)->find($winnerId);
         $participants = $challenge->getChallengeds();
         $totalAmount = 0;
-
+    
         foreach ($participants as $participant) {
             $totalAmount += $participant->getAmount();
-            if ($participant->getChallenger()->getId() !== $winnerId && $participant->getOpponent()->getId() !== $winnerId) {
-                $loser = $participant->getChallenger()->getId() !== $winnerId ? $participant->getChallenger() : $participant->getOpponent();
-                $loser->setPointUsers($loser->getPointUsers() - $participant->getAmount());
+            if ($participant->getChallenger()->getId() === $winnerId) {
+                $loser = $participant->getOpponent();
+            } else {
+                $loser = $participant->getChallenger();
             }
+    
+            $loser->setPointUsers($loser->getPointUsers() - $participant->getAmount());
         }
-
+    
         $winner->setPointUsers($winner->getPointUsers() + $totalAmount);
+    
         $entityManager->flush();
     }
+
+    #[Route('/challenge/statuses', name: 'app_challenge_statuses', methods: ['GET'])]
+    public function getChallengeStatuses(EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+    
+        $challengesSent = $entityManager->getRepository(Challenged::class)->findBy(['challenger' => $user]);
+        $challengesReceived = $entityManager->getRepository(Challenged::class)->findBy(['opponent' => $user]);
+    
+        $challengesData = [];
+        foreach ($challengesSent as $challenge) {
+            $challengesData['sent'][] = [
+                'id' => $challenge->getId(),
+                'opponent' => $challenge->getOpponent()->getName(),
+                'status' => $challenge->getStatus(),
+                'amount' => $challenge->getAmount(),
+            ];
+        }
+        foreach ($challengesReceived as $challenge) {
+            $challengesData['received'][] = [
+                'id' => $challenge->getId(),
+                'challenger' => $challenge->getChallenger()->getName(),
+                'status' => $challenge->getStatus(),
+                'amount' => $challenge->getAmount(),
+            ];
+        }
+    
+        return $this->json($challengesData);
+    }
+
 }

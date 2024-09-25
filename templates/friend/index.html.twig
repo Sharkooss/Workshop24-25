@@ -1,4 +1,3 @@
-{# templates/friend/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Mes amis{% endblock %}
@@ -31,29 +30,52 @@
     <h3>Liste de mes amis</h3>
     <ul class="list-group">
         {% for friend in friends %}
+            {% set canChallenge = true %}
+            {# Vérifier si un défi est déjà en attente (status 'pending') avec cet ami #}
+            {% for challenge in challengesSent %}
+                {% if challenge.opponent.id == friend.id and challenge.status == 'pending' %}
+                    {% set canChallenge = false %}
+                {% endif %}
+            {% endfor %}
+            {% for challenge in challengesReceived %}
+                {% if challenge.challenger.id == friend.id and challenge.status == 'pending' %}
+                    {% set canChallenge = false %}
+                {% endif %}
+            {% endfor %}
+
             <li class="list-group-item">
                 {{ friend.getName() }} {{ friend.getSurnameUsers() }}
-                <a href="{{ path('app_challenge_initiate', { id: friend.id }) }}" class="btn btn-warning">Défier</a>
+                {% if canChallenge %}
+                    <a href="{{ path('app_challenge_initiate', { id: friend.id }) }}" class="btn btn-warning">Défier</a>
+                {% else %}
+                    <span class="badge bg-secondary">Défi en cours</span>
+                {% endif %}
             </li>
         {% else %}
             <p>Vous n'avez pas encore d'amis.</p>
         {% endfor %}
     </ul>
 
+
     <h3>Défis envoyés</h3>
-    <ul class="list-group mb-5">
+    <ul class="list-group mb-5" id="challenges-sent">
         {% for challenge in challengesSent %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 Défi envoyé à {{ challenge.opponent.getName() }} : {{ challenge.amount }} UniTs
-                <span class="badge bg-info">En attente</span>
+                {% if challenge.status == 'accepted' %}
+                    <a href="{{ path('app_challenge_show', { id: challenge.id }) }}" class="btn btn-success">Rejoindre le défi</a>
+                {% else %}
+                    <span class="badge bg-info">En attente</span>
+                {% endif %}
             </li>
         {% else %}
             <p>Vous n'avez envoyé aucun défi.</p>
         {% endfor %}
     </ul>
 
+
     <h3>Défis reçus</h3>
-    <ul class="list-group">
+    <ul class="list-group" id="challenges-received">
         {% for challenge in challengesReceived %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 Défi reçu de {{ challenge.challenger.getName() }} : {{ challenge.amount }} UniTs
@@ -64,4 +86,12 @@
         {% endfor %}
     </ul>
 </div>
+
+<script>
+    function refreshPage() {
+        window.location.reload();
+    }
+    const pageRefreshInterval = setInterval(refreshPage, 5000);
+</script>
+
 {% endblock %}

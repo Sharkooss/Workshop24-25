@@ -36,15 +36,23 @@ class FriendController extends AbstractController
             ->getQuery()
             ->getResult();
     
-        // Récupérer les défis envoyés par l'utilisateur
-        $challengesSent = $entityManager->getRepository(Challenged::class)->findBy([
-            'challenger' => $user,
-        ]);
+        // Récupérer les défis envoyés par l'utilisateur, mais exclure ceux qui sont en statut "done"
+        $challengesSent = $entityManager->getRepository(Challenged::class)->createQueryBuilder('c')
+            ->where('c.challenger = :user')
+            ->andWhere('c.status != :done')
+            ->setParameter('user', $user)
+            ->setParameter('done', 'done')
+            ->getQuery()
+            ->getResult();
     
-        // Récupérer les défis reçus par l'utilisateur
-        $challengesReceived = $entityManager->getRepository(Challenged::class)->findBy([
-            'opponent' => $user,
-        ]);
+        // Récupérer les défis reçus par l'utilisateur, mais exclure ceux qui sont en statut "done"
+        $challengesReceived = $entityManager->getRepository(Challenged::class)->createQueryBuilder('c')
+            ->where('c.opponent = :user')
+            ->andWhere('c.status != :done')
+            ->setParameter('user', $user)
+            ->setParameter('done', 'done')
+            ->getQuery()
+            ->getResult();
     
         $friendDetails = [];
         foreach ($friends as $friendRequest) {
@@ -53,13 +61,11 @@ class FriendController extends AbstractController
     
         return $this->render('friend/index.html.twig', [
             'friends' => $friendDetails,
-            'receivedRequests' => $receivedRequests, // Ajout des demandes reçues
+            'receivedRequests' => $receivedRequests,
             'challengesSent' => $challengesSent,
             'challengesReceived' => $challengesReceived,
         ]);
-    }
-    
-    
+    }    
 
     #[Route('/friend/search', name: 'app_friend_search', methods: ['GET'])]
     public function search(Request $request, EntityManagerInterface $entityManager): Response
