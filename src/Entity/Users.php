@@ -70,7 +70,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         $this->participates = new ArrayCollection();
         $this->challengeds = new ArrayCollection();
 
-        $this->role_users = 'ROLE_USER'; 
+        $this->role_users = 'USER'; 
     }
 
     public function getId(): ?int

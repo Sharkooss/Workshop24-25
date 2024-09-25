@@ -1,0 +1,19 @@
+{# templates/challenge/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Défier un ami{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Défier {{ friend.name }} {{ friend.surnameUsers }}</h1>
+
+    <form method="POST" action="{{ path('app_challenge', { id: friend.id }) }}">
+        <div class="mb-3">
+            <label for="amount" class="form-label">Montant en UniTs</label>
+            <input type="number" class="form-control" id="amount" name="amount" min="1" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Envoyer le défi</button>
+    </form>
+</div>
+{% endblock %}

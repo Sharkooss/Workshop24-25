@@ -1,0 +1,34 @@
+{# templates/challenge/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Défi{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>{{ challenge.nameChallenge }}</h1>
+    <p>{{ challenge.descritpionChallenge }}</p>
+
+    <h3>Participants</h3>
+    <ul class="list-group">
+        {% for participant in challenge.challengeds %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {# Affichage des noms des participants #}
+                {{ participant.challenger.getName() }} vs {{ participant.opponent.getName() }}
+                <span class="badge bg-info">{{ participant.status }}</span>
+
+                {# Afficher le bouton pour sélectionner un gagnant si le défi est accepté #}
+                {% if participant.status == 'accepted' and participant.selectedWinnerChallenger == null and participant.selectedWinnerOpponent == null %}
+                    <form method="POST" action="{{ path('app_challenge_select_winner', { id: participant.id }) }}">
+                        <button type="submit" class="btn btn-success">Sélectionner comme gagnant</button>
+                    </form>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {# Afficher un message si le gagnant a été désigné #}
+    {% if selectionComplete %}
+        <p class="alert alert-success">Le gagnant a été désigné.</p>
+    {% endif %}
+</div>
+{% endblock %}

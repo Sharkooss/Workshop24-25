@@ -14,7 +14,10 @@ class Challenged
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'challengeds')]
-    private ?users $id_users = null;
+    private ?Users $challenger = null; // L'utilisateur qui lance le défi
+
+    #[ORM\ManyToOne(inversedBy: 'challengeds')]
+    private ?Users $opponent = null; // L'utilisateur qui est défié
 
     #[ORM\ManyToOne(inversedBy: 'challengeds')]
     private ?Challenge $id_challenge = null;
@@ -22,19 +25,40 @@ class Challenged
     #[ORM\Column(nullable: true)]
     private ?int $amount = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $selectedWinnerChallenger = null; // Le gagnant sélectionné par le challenger
+
+    #[ORM\Column(nullable: true)]
+    private ?int $selectedWinnerOpponent = null; // Le gagnant sélectionné par l'opponent
+
+    #[ORM\Column(length: 20)]
+    private ?string $status = 'pending'; // Champ status ajouté précédemment
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getIdUsers(): ?users
+    public function getChallenger(): ?Users
     {
-        return $this->id_users;
+        return $this->challenger;
     }
 
-    public function setIdUsers(?users $id_users): static
+    public function setChallenger(?Users $challenger): static
     {
-        $this->id_users = $id_users;
+        $this->challenger = $challenger;
+
+        return $this;
+    }
+
+    public function getOpponent(): ?Users
+    {
+        return $this->opponent;
+    }
+
+    public function setOpponent(?Users $opponent): static
+    {
+        $this->opponent = $opponent;
 
         return $this;
     }
@@ -59,6 +83,42 @@ class Challenged
     public function setAmount(?int $amount): static
     {
         $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getSelectedWinnerChallenger(): ?int
+    {
+        return $this->selectedWinnerChallenger;
+    }
+
+    public function setSelectedWinnerChallenger(?int $selectedWinnerChallenger): static
+    {
+        $this->selectedWinnerChallenger = $selectedWinnerChallenger;
+
+        return $this;
+    }
+
+    public function getSelectedWinnerOpponent(): ?int
+    {
+        return $this->selectedWinnerOpponent;
+    }
+
+    public function setSelectedWinnerOpponent(?int $selectedWinnerOpponent): static
+    {
+        $this->selectedWinnerOpponent = $selectedWinnerOpponent;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

@@ -5,3 +5,20 @@ controllers:
 app_home:
     path: /
     controller: App\Controller\HomeController::index
+
+app_friends:
+    path: /friend
+    controller: App\Controller\FriendController::friends
+
+app_friend_search:
+    path: /friend/search
+    controller: App\Controller\FriendController::search
+
+app_friend_request:
+    path: /friend/request/{id}
+    controller: App\Controller\FriendController::sendFriendRequest
+
+app_friend_respond:
+    path: /friend/request/respond/{id}
+    controller: App\Controller\FriendController::respondToFriendRequest
+

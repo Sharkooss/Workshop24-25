@@ -1,0 +1,67 @@
+{# templates/friend/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes amis{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Mes amis</h1>
+
+    <h3>Demandes reçues</h3>
+    <ul class="list-group mb-3">
+        {% for friendRequest in receivedRequests %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Demande d'ami de {{ friendRequest.sender.getName() }} {{ friendRequest.sender.getSurnameUsers() }}
+                <div>
+                    <form method="POST" action="{{ path('app_friend_respond', { id: friendRequest.id }) }}">
+                        <input type="hidden" name="response" value="accept">
+                        <button class="btn btn-success">Accepter</button>
+                    </form>
+                    <form method="POST" action="{{ path('app_friend_respond', { id: friendRequest.id }) }}">
+                        <input type="hidden" name="response" value="reject">
+                        <button class="btn btn-danger">Refuser</button>
+                    </form>
+                </div>
+            </li>
+        {% else %}
+            <p>Vous n'avez aucune demande d'amis en attente.</p>
+        {% endfor %}
+    </ul>
+
+    <h3>Liste de mes amis</h3>
+    <ul class="list-group">
+        {% for friend in friends %}
+            <li class="list-group-item">
+                {{ friend.getName() }} {{ friend.getSurnameUsers() }}
+                <a href="{{ path('app_challenge_initiate', { id: friend.id }) }}" class="btn btn-warning">Défier</a>
+            </li>
+        {% else %}
+            <p>Vous n'avez pas encore d'amis.</p>
+        {% endfor %}
+    </ul>
+
+    <h3>Défis envoyés</h3>
+    <ul class="list-group mb-5">
+        {% for challenge in challengesSent %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Défi envoyé à {{ challenge.opponent.getName() }} : {{ challenge.amount }} UniTs
+                <span class="badge bg-info">En attente</span>
+            </li>
+        {% else %}
+            <p>Vous n'avez envoyé aucun défi.</p>
+        {% endfor %}
+    </ul>
+
+    <h3>Défis reçus</h3>
+    <ul class="list-group">
+        {% for challenge in challengesReceived %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Défi reçu de {{ challenge.challenger.getName() }} : {{ challenge.amount }} UniTs
+                <a href="{{ path('app_challenge_accept', { id: challenge.id }) }}" class="btn btn-success">Accepter</a>
+            </li>
+        {% else %}
+            <p>Vous n'avez reçu aucun défi.</p>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
