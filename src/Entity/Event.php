@@ -28,6 +28,12 @@ class Event
     #[ORM\OneToMany(targetEntity: Participate::class, mappedBy: 'id_event')]
     private Collection $participates;
 
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $cash_prise = null;
+
+    #[ORM\Column(length: 10)]
+    private ?string $status = 'open'; // Ajout du champ statut avec une valeur par défaut "open"
+
     public function __construct()
     {
         $this->participates = new ArrayCollection();
@@ -46,7 +52,6 @@ class Event
     public function setNameEvent(string $name_event): static
     {
         $this->name_event = $name_event;
-
         return $this;
     }
 
@@ -58,7 +63,6 @@ class Event
     public function setDescriptionEvent(?string $description_event): static
     {
         $this->description_event = $description_event;
-
         return $this;
     }
 
@@ -70,7 +74,28 @@ class Event
     public function setIdUsers(?users $id_users): static
     {
         $this->id_users = $id_users;
+        return $this;
+    }
 
+    public function getCashPrise(): ?int
+    {
+        return $this->cash_prise;
+    }
+
+    public function setCashPrise(?int $cash_prise): static
+    {
+        $this->cash_prise = $cash_prise;
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
         return $this;
     }
 
@@ -95,7 +120,6 @@ class Event
     public function removeParticipate(Participate $participate): static
     {
         if ($this->participates->removeElement($participate)) {
-            // set the owning side to null (unless already changed)
             if ($participate->getIdEvent() === $this) {
                 $participate->setIdEvent(null);
             }

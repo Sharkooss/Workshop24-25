@@ -348,7 +348,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     // Méthodes requises par UserInterface
     public function getRoles(): array
     {
-        return ['ROLE_USER']; // Par défaut, chaque utilisateur a le rôle "ROLE_USER"
+        return ['USER']; // Par défaut, chaque utilisateur a le rôle "ROLE_USER"
     }
 
     public function getSalt(): ?string

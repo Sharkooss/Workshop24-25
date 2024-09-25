@@ -1,0 +1,53 @@
+{# templates/event/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des événements{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Liste des événements</h1>
+
+    {# Bouton pour créer un événement uniquement visible pour les ADMIN #}
+    {% if isAdmin %}
+        <div class="mb-4 text-end">
+            <a href="{{ path('app_event_new') }}" class="btn btn-success">Créer un événement</a>
+        </div>
+    {% endif %}
+
+    <ul class="list-group">
+        {% for event in events %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h5>{{ event.nameEvent }}</h5>
+                    <p>{{ event.descriptionEvent }}</p>
+                    <p><strong>Cash Prize:</strong> {{ event.cashPrise }} UniTs</p>
+                    <p><strong>Statut :</strong> {{ event.status|capitalize }}</p>
+                </div>
+                <div>
+                    {% if event.id in participatedEvents %}
+                        <span class="badge bg-primary">Inscrit</span>
+                    {% else %}
+                        {% if event.status == 'open' %}
+                            <a href="{{ path('app_event_join', { id: event.id }) }}" class="btn btn-primary">S'inscrire</a>
+                        {% elseif event.status == 'close' %}
+                            <span class="badge bg-secondary">Inscriptions fermées</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Événement terminé</span>
+                        {% endif %}
+                    {% endif %}
+
+                    {# Bouton pour afficher les participants #}
+                    <a href="{{ path('app_event_participants', { id: event.id }) }}" class="btn btn-sm btn-info">Voir</a>
+
+                    {# Ajouter le bouton "Gérer" pour les administrateurs #}
+                    {% if isAdmin %}
+                        <a href="{{ path('app_event_manage', { id: event.id }) }}" class="btn btn-warning">Gérer</a>
+                    {% endif %}
+                </div>
+            </li>
+        {% else %}
+            <li class="list-group-item">Aucun événement disponible.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

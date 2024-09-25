@@ -1,0 +1,38 @@
+{# templates/event/participants.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Participants - {{ event.nameEvent }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Participants de l'événement - {{ event.nameEvent }}</h1>
+
+    <ul class="list-group">
+        {% for participant in participants %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ participant.idUsers.getName() }} {{ participant.idUsers.getSurnameUsers() }}</strong>
+                    <span class="text-muted">(Points: {{ participant.idUsers.getPointUsers() }})</span>
+                </div>
+                <div class="text-end">
+                    {% if participant.ranking is not null %}
+                        {% if participant.ranking == 1 %}
+                            <span class="badge bg-warning text-dark">1er</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ participant.ranking }}{{ participant.ranking == 2 ? 'e' : 'e' }}</span>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if participant.unitsAmount is not null and participant.unitsAmount > 0 %}
+                        <span class="badge bg-success">Gain : +{{ participant.unitsAmount }} UniTs</span>
+                    {% else %}
+                        <span class="badge bg-light text-muted">Pas de gain</span>
+                    {% endif %}
+                </div>
+            </li>
+        {% else %}
+            <li class="list-group-item text-center">Aucun participant inscrit.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

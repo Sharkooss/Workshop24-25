@@ -1,0 +1,26 @@
+{# templates/event/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un événement{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Créer un événement</h1>
+
+    {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_label(form.name_event) }}
+            {{ form_widget(form.name_event, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.description_event) }}
+            {{ form_widget(form.description_event, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.cash_prise) }}
+            {{ form_widget(form.cash_prise, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Créer l'événement</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
