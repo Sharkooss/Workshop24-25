@@ -23,7 +23,7 @@ class Event
     private ?string $description_event = null;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
-    private ?users $id_users = null;
+    private ?Users $id_users = null;
 
     #[ORM\OneToMany(targetEntity: Participate::class, mappedBy: 'id_event')]
     private Collection $participates;
@@ -66,12 +66,12 @@ class Event
         return $this;
     }
 
-    public function getIdUsers(): ?users
+    public function getIdUsers(): ?Users
     {
         return $this->id_users;
     }
 
-    public function setIdUsers(?users $id_users): static
+    public function setIdUsers(?Users $id_users): static
     {
         $this->id_users = $id_users;
         return $this;

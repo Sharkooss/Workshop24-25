@@ -17,7 +17,7 @@ class Buy
     private ?Users $id_users = null;
 
     #[ORM\ManyToOne(inversedBy: 'buys')]
-    private ?shop $id_shop = null;
+    private ?Shop $id_shop = null;
 
     public function getId(): ?int
     {
@@ -36,12 +36,12 @@ class Buy
         return $this;
     }
 
-    public function getIsShop(): ?shop
+    public function getIsShop(): ?Shop
     {
         return $this->id_shop;
     }
 
-    public function setIsShop(?shop $id_shop): static
+    public function setIsShop(?Shop $id_shop): static
     {
         $this->id_shop = $id_shop;
 
